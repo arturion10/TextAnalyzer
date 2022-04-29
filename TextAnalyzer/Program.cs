@@ -1,6 +1,7 @@
 ﻿
 //1. Из слова информатика путем «вырезок» и «склеек» получить слова "форма" и "тик".
 
+using System.Text;
 using System.Text.RegularExpressions;
 
 var informaticStr = "информатика";
@@ -65,7 +66,7 @@ Console.WriteLine("Введите число любое кроме 1, 0 и не 
 int.TryParse(Console.ReadLine(), out var number);
 if (number > arr.Length)
 {
-    Console.WriteLine("Ввели симло больше длинны, операция перемещения невозможна");
+    Console.WriteLine("Ввели символ больше длинны, операция перемещения невозможна");
 }
 var length = arr.Length;
 for (int i = 1; i * number < arr.Length; i *= number)
@@ -293,12 +294,12 @@ var text = "4389t98hqhgfufuhq2934thfq3htgf83gf3gf4f8324";
 
 //  - напечатать все имеющиеся в нем цифры
 var numList = new List<int>();
-
+int defaultnum;
 for (var i = 0; i < text.Length; i++)
 {
-    if(int.TryParse(text[i].ToString(), out int num))
+    if(int.TryParse(text[i].ToString(), out defaultnum))
     {
-        numList.Add(num);
+        numList.Add(defaultnum);
     }
 }
 
@@ -346,7 +347,7 @@ var countNums = 0;
 var resultCountNums = 0;
 for (var i = 0; i < text.Length; i++)
 {
-    if (int.TryParse(text[i].ToString(), out int num))
+    if (int.TryParse(text[i].ToString(), out defaultnum))
     {
         if (i - 1 == controlNum)
         {
@@ -398,3 +399,184 @@ if (countChars > resultCountChars)
     resultCountChars = countChars;
 }
 Console.WriteLine($"Макисмальное количество одинаковых, идущих подряд символов = {resultCountChars}");
+
+// 7. Даны два слова
+
+Console.WriteLine("Напишите два слова: ");
+var word1 = Console.ReadLine();
+var word2 = Console.ReadLine();
+
+// - определить можно ли из букв первого получить второе
+
+var missingСhars = word2.Except(word1).Count();
+var answerMessage = missingСhars == 0 ? "Из букв второго слова можно получить первое" :
+                                             "Из букв второго слова нельзя получить первое";
+Console.WriteLine(answerMessage);
+
+// - определить повторяющиеся(пересекающиеся буквы)
+
+var overlappingChars = word1.Intersect(word2);
+Console.Write("Все пересекающиеся буквы: ");
+foreach(var ch in overlappingChars)
+{
+    Console.WriteLine(ch);
+}
+
+
+// 8. Дан текст. Проверить правильно ли в нем расставлены круглые скобочки
+// (т.е. находится ли справа от каждой открывающей скобки соотвествующая ей закрывающая скобка,
+// а слева от закрывающей - соотвествующая ей закрывающая). 
+// Выдать сообщение с указанием позиции первой неправильной скобки.
+
+var text1 = "(()";
+var enumOpenChars = new List<int>();
+var enumCloseChars = new List<int>();
+for (var i = 0; i < text1.Length; i++)
+{
+    if(text1[i] == '(')
+    {
+        enumOpenChars.Add(i);
+    }
+    if(text1[i] == ')')
+    {
+        enumCloseChars.Add(i);
+    }
+}
+if(enumOpenChars.Count == enumCloseChars.Count)
+{
+    for(var i = 0; i < enumOpenChars.Count; i++)
+    {
+        if(enumOpenChars[i] > enumCloseChars[i])
+        {
+            Console.WriteLine($"Ошибка скобок в символе{enumCloseChars[i]+1} - не хватае (");
+            Console.WriteLine($"Ошибка скобок в символе{enumOpenChars[i] + 1} - не хватае )");
+        }
+    }
+}
+else if(enumOpenChars.Count > enumCloseChars.Count)
+{
+    for (var i = 0; i < enumOpenChars.Count; i++)
+    {
+        if (enumCloseChars.Count >= i)
+        {
+            if (enumOpenChars[i] > enumCloseChars[i])
+            {
+                Console.WriteLine($"Ошибка скобок в символе{enumCloseChars[i] + 1} - не хватае (");
+                Console.WriteLine($"Ошибка скобок в символе{enumOpenChars[i] + 1} - не хватае )");
+            }
+        }
+        else
+        {
+            Console.WriteLine($"Ошибка скобок в символе{enumOpenChars[i] + 1} - не хватае )");
+        }
+    }
+}
+else if(enumOpenChars.Count < enumCloseChars.Count)
+{
+    for (var i = 0; i < enumCloseChars.Count; i++)
+    {
+        if (enumOpenChars.Count >= i)
+        {
+            if (enumOpenChars[i] > enumCloseChars[i])
+            {
+                Console.WriteLine($"Ошибка скобок в символе{enumCloseChars[i] + 1} - не хватае (");
+                Console.WriteLine($"Ошибка скобок в символе{enumOpenChars[i] + 1} - не хватае )");
+            }
+        }
+        else
+        {
+            Console.WriteLine($"Ошибка скобок в символе{enumCloseChars[i] + 1} - не хватае (");
+        }
+    }
+}
+else
+{
+    Console.WriteLine("Ошибок в скобках нет");
+}
+
+// 9. Данна строка текста, в кторой нет начальных и конечных пробелов.
+// Необходимо изменитб ее так, Чтобы длина строки стала равна заданой длине
+// (препологается, что требуемая длина не меньше исходной).
+// Это следует сделать путем вставки иежду словами дополнительных пробелов.
+// Количество пробелов между отдельными словами должно отличаться не более чем на 1.
+
+var st = "Давайте удленним строку до 60 симолов"; 
+var countCharToJoin = 60 - st.Length; //23
+var num = 60; 
+var stList = st.Split(' ');
+var countSpaces = stList.Length -1; //5
+var newSt = new StringBuilder();
+var countSpacesInOneBig = countCharToJoin % countSpaces;
+var countSpacesInOne = countCharToJoin / countSpaces;
+for(var i = 0; i < stList.Length; i++)
+{
+    if(i < countSpacesInOneBig)
+    {
+        newSt.Append(stList[i]);
+        newSt.Append(String.Concat(Enumerable.Repeat(' ', countSpacesInOne + 2)));
+    }
+    else
+    {
+        newSt.Append(stList[i]);
+        newSt.Append(String.Concat(Enumerable.Repeat(' ', countSpacesInOne + 1)));
+    }
+}
+Console.WriteLine(newSt.ToString().TrimEnd());
+
+// 10. Дано натуральное число Н (Н <= 1000). Напечатать это число русскими словами (тринадцать, сто пять, двести сорок один и т.д.).
+
+var numToConvert = 876;
+
+var nums_1_9 = new[] { "", "один", "два", "три", "четыре", "пять", "шесть", "семь", "восемь", "девять" };
+var nums_10_19= new[] { "десять", "одинадцать", "двенадцать", "тринадцать", "четырнадцать", "пятнадцать", 
+                        "шестнадцать", "семнадцать", "восемнадцатдь", "девятнадцать" };
+var nums_20_90 = new[] { "двадцать", "тридцать", "сорок", "пятьдесят", "шестьдесят", "семьдесят", "восемьдесят", "девяносто"};
+var nums_100_900 = new[] { "сто", "двести", "триста", "четыресто", "пятьсот", "шестьсот", "восемьсот", "девятьсот" };
+
+var razryadNum = numToConvert.ToString().Length;
+
+switch(razryadNum)
+{
+    case 1:
+        if(numToConvert == 0)
+        {
+            Console.WriteLine("ноль");
+        }
+        else
+        {
+            Console.WriteLine(nums_1_9[numToConvert]);
+        }
+        break;
+    case 2:
+        if (numToConvert < 20)
+        {
+            Console.WriteLine(nums_10_19[numToConvert - 10]);
+        }
+        else
+        {
+            Console.WriteLine(nums_20_90[numToConvert / 10 - 2] + " " + nums_1_9[numToConvert]);
+        }
+        break;
+    case 3:
+        if(numToConvert % 100 < 10)
+        {
+            Console.WriteLine(nums_100_900[numToConvert / 100 - 1] + " " +
+                              nums_1_9[numToConvert]);
+        }
+        else if (numToConvert % 100 < 20)
+        {
+            Console.WriteLine(nums_100_900[numToConvert / 100 - 1] + " " +
+                              nums_10_19[numToConvert - 10]);
+        }
+        else
+        {
+            Console.WriteLine(nums_100_900[numToConvert / 100 - 1] + " " +
+                              nums_20_90[numToConvert / 10 - 2] + " " +
+                              nums_1_9[numToConvert]);
+        }
+        break;
+    case 4:
+        Console.WriteLine("Тысяча");
+        break;
+
+}

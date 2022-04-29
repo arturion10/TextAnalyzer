@@ -30,5 +30,61 @@ namespace TextAnalyzer
 
             return total;
         }
+
+        public string ReverceCharDegreeOfNumber(string word, int num)
+        {
+            var arr = word.ToCharArray();
+            var length = arr.Length;
+            for (int i = 1; i * num < arr.Length; i *= num)
+            {
+                char a = arr[i - 1];
+                char b = arr[i * num - 1];
+                arr[i - 1] = b;
+                arr[i * num - 1] = a;
+            }
+            return string.Join("", arr);
+        }
+
+        public int SpecifiesHowManyVowels(string st)
+        {
+            var conVowel = 0;
+            for (var i = 0; i < st.Length; i++)
+            {
+                switch (st.ToLower()[i])
+                {
+                    case 'а':
+                        conVowel++;
+                        break;
+                    case 'о':
+                        conVowel++;
+                        break;
+                    case 'э':
+                        conVowel++;
+                        break;
+                    case 'е':
+                        conVowel++;
+                        break;
+                    case 'и':
+                        conVowel++;
+                        break;
+                    case 'ы':
+                        conVowel++;
+                        break;
+                    case 'у':
+                        conVowel++;
+                        break;
+                    case 'ё':
+                        conVowel++;
+                        break;
+                    case 'ю':
+                        conVowel++;
+                        break;
+                    case 'я':
+                        conVowel++;
+                        break;
+                }
+            }
+            return conVowel;
+        }
     }
 }
